@@ -20,6 +20,16 @@ const createAppStore = () => {
       };
     })
   );
+  const [bestScore, setBestScore] = createSignal(
+    (() => {
+      const saved = localStorage.getItem('bestScore');
+      if (saved) {
+        return +saved;
+      } else {
+        return null;
+      }
+    })()
+  );
 
   const setRandomDices = () =>
     setDices((prev) =>
@@ -32,7 +42,14 @@ const createAppStore = () => {
       })
     );
 
+  const saveBestScore = (score: number) => {
+    setBestScore(score);
+    localStorage.setItem('bestScore', score.toString());
+  };
+
   return {
+    bestScore,
+    saveBestScore,
     randomDices: dices,
     setRandomDices,
     gameStarted,

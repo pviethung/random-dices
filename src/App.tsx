@@ -1,10 +1,12 @@
-import { Component } from 'solid-js';
+import { Component, createEffect } from 'solid-js';
 import Confetti from './components/Confetti';
 import DiceList from './components/DiceList';
 import store from './store';
 
 const App: Component = () => {
   const {
+    bestScore,
+    saveBestScore,
     randomDices,
     setRandomDices,
     rollCount,
@@ -22,6 +24,12 @@ const App: Component = () => {
         }
         return total;
       }, 0) + 1;
+
+  createEffect(() => {
+    if (numberOfSameDice() === 10) {
+      saveBestScore(rollCount());
+    }
+  });
 
   return (
     <div class="flex justify-center items-center bg-blue-300 h-screen w-screen">
@@ -45,15 +53,17 @@ const App: Component = () => {
         >
           {!gameStarted() ? 'Start Game' : 'Roll'}
         </button>
-        <div class="flex justify-between">
+        <div class="flex justify-around text-xl">
           <div>
             <p>Rolls:</p>
             <p>{rollCount()}</p>
           </div>
-          <div>
-            <p>Best:</p>
-            <p></p>
-          </div>
+          {bestScore() && (
+            <div>
+              <p>Best:</p>
+              <p>{bestScore()}</p>
+            </div>
+          )}
         </div>
       </div>
       {numberOfSameDice() === 10 && <Confetti />}
